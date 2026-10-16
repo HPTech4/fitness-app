@@ -310,7 +310,13 @@ const styles = StyleSheet.create({
   },
   progressBarFill: { height: 4, backgroundColor: COLORS.primary, borderRadius: 2 },
   main: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: SIZES.padding },
-  exerciseName: { fontSize: 26, fontWeight: 'bold', color: COLORS.text, textAlign: 'center' },
+  exerciseName: {
+  fontSize: 26,
+  fontWeight: '800',
+  color: COLORS.text,
+  textAlign: 'center',
+  letterSpacing: -0.4,
+},
   exerciseSub: { fontSize: 14, color: COLORS.textSecondary, marginTop: 6, marginBottom: 20 },
   repCircle: {
     width: 240, height: 240, borderRadius: 120,
@@ -321,10 +327,14 @@ const styles = StyleSheet.create({
   repBig: { fontSize: 72, fontWeight: 'bold', color: COLORS.text },
   repLabel: { fontSize: 16, color: COLORS.textSecondary, marginTop: -4 },
   controlsRow: { flexDirection: 'row', alignItems: 'center', gap: 20, marginTop: 20 },
-  secondaryBtn: {
-    paddingHorizontal: 18, paddingVertical: 12,
-    backgroundColor: COLORS.card, borderRadius: 14,
-  },
+secondaryBtn: {
+  paddingHorizontal: 18,
+  paddingVertical: 12,
+  backgroundColor: COLORS.card,
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: COLORS.border,
+},
   secondaryBtnText: { color: COLORS.text, fontWeight: '600' },
   playBtn: {
     width: 72, height: 72, borderRadius: 36,

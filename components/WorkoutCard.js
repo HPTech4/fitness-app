@@ -10,14 +10,17 @@ export default function WorkoutCard({ title, duration, level, image, onPress }) 
       <View style={styles.imageWrapper}>
         <Image source={{ uri: image }} style={styles.image} />
         <View style={styles.durationBadge}>
-          <Ionicons name="time-outline" size={12} color="#fff" />
+          <Ionicons name="time-outline" size={11} color="#fff" />
           <Text style={styles.durationText}>{duration}</Text>
         </View>
       </View>
 
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={1}>{title}</Text>
-        <Text style={styles.level}>{level}</Text>
+        <View style={styles.metaRow}>
+          <View style={styles.levelDot} />
+          <Text style={styles.level}>{level}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -27,13 +30,13 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     backgroundColor: COLORS.card,
-    borderRadius: 16,
+    borderRadius: 18,
     overflow: 'hidden',
     marginBottom: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowRadius: 10,
     elevation: 2,
   },
   imageWrapper: {
@@ -53,13 +56,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.55)',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 10,
     gap: 4,
   },
   durationText: {
     color: '#fff',
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: '700',
   },
   info: {
     padding: 12,
@@ -68,10 +71,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: COLORS.text,
-    marginBottom: 4,
+    marginBottom: 6,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  levelDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLORS.primary,
   },
   level: {
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.textSecondary,
+    fontWeight: '600',
   },
 });

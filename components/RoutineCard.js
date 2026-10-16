@@ -10,21 +10,40 @@ export default function RoutineCard({
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.iconContainer}>
-        <Ionicons name={iconName || 'fitness'} size={20} color={COLORS.primary} />
+        <Ionicons
+          name={iconName || 'fitness'}
+          size={20}
+          color={isCompleted ? COLORS.success : COLORS.primary}
+        />
       </View>
 
       <View style={styles.textContainer}>
-        <Text style={[styles.title, isCompleted && styles.completedText]}>
+        <Text
+          style={[styles.title, isCompleted && styles.completedText]}
+          numberOfLines={1}
+        >
           {title}
         </Text>
-        <Text style={styles.subtitle}>{time} • {duration}</Text>
+        <View style={styles.metaRow}>
+          <Ionicons name="time-outline" size={11} color={COLORS.textSecondary} />
+          <Text style={styles.subtitle}>
+            {time} · {duration}
+          </Text>
+        </View>
       </View>
 
-      <TouchableOpacity style={styles.actionButton} onPress={onToggle} hitSlop={10}>
+      <TouchableOpacity
+        style={[
+          styles.checkBtn,
+          isCompleted && styles.checkBtnActive,
+        ]}
+        onPress={onToggle}
+        hitSlop={10}
+      >
         <Ionicons
-          name={isCompleted ? 'checkmark-circle' : 'ellipse-outline'}
-          size={28}
-          color={isCompleted ? COLORS.success : COLORS.primary}
+          name={isCompleted ? 'checkmark' : 'play'}
+          size={16}
+          color={isCompleted ? '#fff' : COLORS.primary}
         />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -37,29 +56,53 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.card,
     borderRadius: SIZES.borderRadius,
-    padding: 15,
+    padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 1,
   },
   iconContainer: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: '#FFF0EB',
-    justifyContent: 'center', alignItems: 'center',
-    marginRight: 15,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: COLORS.primarySoft,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
   },
   textContainer: { flex: 1 },
   title: {
-    fontSize: 15, fontWeight: '600',
-    color: COLORS.text, marginBottom: 4,
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: 4,
   },
   completedText: {
     textDecorationLine: 'line-through',
     color: COLORS.textSecondary,
   },
-  subtitle: { fontSize: 12, color: COLORS.textSecondary },
-  actionButton: { padding: 4 },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+  },
+  checkBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: COLORS.primarySoft,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  checkBtnActive: {
+    backgroundColor: COLORS.success,
+  },
 });

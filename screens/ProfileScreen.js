@@ -8,8 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { fetchMe } from '../api/authService';
 import { COLORS, SIZES } from '../constants/theme';
+import ProfileScreenSkeleton from "../components/skeletons/ProfileScreenSkeleton";
 
-export default function ProfileScreen({ onLogout }) {
+export default function ProfileScreen({ onLogout, navigation })  {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -45,13 +46,7 @@ export default function ProfileScreen({ onLogout }) {
   };
 
   if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        </View>
-      </SafeAreaView>
-    );
+    return <ProfileScreenSkeleton />;
   }
 
   const initials = user?.name
@@ -60,27 +55,61 @@ export default function ProfileScreen({ onLogout }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
         {/* HERO */}
-        <View style={styles.hero}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
-          </View>
-          <Text style={styles.name}>{user?.name || 'User'}</Text>
-          <Text style={styles.email}>{user?.email || ''}</Text>
-        </View>
+       <View style={styles.hero}>
+  <View style={styles.avatarRing}>
+    <View style={styles.avatar}>
+      <Text style={styles.avatarText}>{initials}</Text>
+    </View>
+  </View>
+  <Text style={styles.name}>{user?.name || 'User'}</Text>
+  <Text style={styles.email}>{user?.email || ''}</Text>
+  <View style={styles.heroChip}>
+    <Ionicons name="flash" size={11} color={COLORS.primary} />
+    <Text style={styles.heroChipText}>FitFlow member</Text>
+  </View>
+</View>
 
         {/* MENU */}
         <View style={styles.menu}>
-          <MenuItem icon="person-outline" label="Edit profile" />
-          <MenuItem icon="notifications-outline" label="Notifications" />
-          <MenuItem icon="lock-closed-outline" label="Privacy & security" />
-          <MenuItem icon="help-circle-outline" label="Help & support" />
-          <MenuItem icon="information-circle-outline" label="About FitFlow" />
+          <MenuItem
+            icon="person-outline"
+            label="Edit profile"
+            onPress={() => navigation.navigate("Settings", { type: "edit" })}
+          />
+          <MenuItem
+            icon="notifications-outline"
+            label="Notifications"
+            onPress={() =>
+              navigation.navigate("Settings", { type: "notifications" })
+            }
+          />
+          <MenuItem
+            icon="lock-closed-outline"
+            label="Privacy & security"
+            onPress={() => navigation.navigate("Settings", { type: "privacy" })}
+          />
+          <MenuItem
+            icon="help-circle-outline"
+            label="Help & support"
+            onPress={() => navigation.navigate("Settings", { type: "help" })}
+          />
+          <MenuItem
+            icon="information-circle-outline"
+            label="About FitFlow"
+            onPress={() => navigation.navigate("Settings", { type: "about" })}
+          />
         </View>
 
         {/* LOGOUT */}
-        <TouchableOpacity style={styles.logoutBtn} onPress={() => setConfirmVisible(true)}>
+        <TouchableOpacity
+          style={styles.logoutBtn}
+          onPress={() => setConfirmVisible(true)}
+        >
           <Ionicons name="log-out-outline" size={20} color="#E53935" />
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
@@ -99,7 +128,10 @@ export default function ProfileScreen({ onLogout }) {
           style={styles.modalBackdrop}
           onPress={() => setConfirmVisible(false)}
         >
-          <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+          <Pressable
+            style={styles.modalCard}
+            onPress={(e) => e.stopPropagation()}
+          >
             <View style={styles.modalIconWrap}>
               <Ionicons name="log-out-outline" size={28} color="#E53935" />
             </View>
@@ -135,9 +167,9 @@ export default function ProfileScreen({ onLogout }) {
   );
 }
 
-function MenuItem({ icon, label }) {
+function MenuItem({ icon, label, onPress }) {
   return (
-    <TouchableOpacity style={styles.menuItem}>
+    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
       <View style={styles.menuIcon}>
         <Ionicons name={icon} size={20} color={COLORS.text} />
       </View>
@@ -148,25 +180,58 @@ function MenuItem({ icon, label }) {
 }
 
 const styles = StyleSheet.create({
+  hero: { alignItems: 'center', marginBottom: 30 },
+avatarRing: {
+  width: 112,
+  height: 112,
+  borderRadius: 56,
+  backgroundColor: COLORS.primarySoft,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 14,
+},
+avatar: {
+  width: 96,
+  height: 96,
+  borderRadius: 48,
+  backgroundColor: COLORS.primary,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+avatarText: { fontSize: 34, fontWeight: 'bold', color: '#fff' },
+name: { fontSize: 22, fontWeight: '800', color: COLORS.text, letterSpacing: -0.3 },
+email: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4 },
+heroChip: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 4,
+  backgroundColor: COLORS.primarySoft,
+  paddingHorizontal: 10,
+  paddingVertical: 5,
+  borderRadius: 12,
+  marginTop: 10,
+},
+heroChipText: {
+  fontSize: 11,
+  color: COLORS.primary,
+  fontWeight: '700',
+  letterSpacing: 0.3,
+},
+
+
   container: { flex: 1, backgroundColor: COLORS.background },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scroll: { padding: SIZES.padding, paddingTop: 20 },
-  hero: { alignItems: 'center', marginBottom: 30 },
-  avatar: {
-    width: 100, height: 100, borderRadius: 50,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center', alignItems: 'center',
-    marginBottom: 14,
-  },
-  avatarText: { fontSize: 36, fontWeight: 'bold', color: '#fff' },
-  name: { fontSize: 22, fontWeight: 'bold', color: COLORS.text },
-  email: { fontSize: 14, color: COLORS.textSecondary, marginTop: 4 },
-  menu: {
-    backgroundColor: COLORS.card,
-    borderRadius: 20,
-    padding: 8,
-    marginBottom: 20,
-  },
+
+
+menu: {
+  backgroundColor: COLORS.card,
+  borderRadius: 20,
+  padding: 8,
+  marginBottom: 20,
+  borderWidth: 1,
+  borderColor: COLORS.border,
+},
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',

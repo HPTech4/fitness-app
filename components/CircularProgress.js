@@ -1,8 +1,17 @@
 // components/CircularProgress.js
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
-import { COLORS } from '../constants/theme';
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import Svg, { Circle } from "react-native-svg";
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+  withDelay,
+  Easing,
+} from "react-native-reanimated";
+import { COLORS } from "../constants/theme";
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function CircularProgress({
   size = 130,
@@ -10,7 +19,7 @@ export default function CircularProgress({
   caloriesProgress = 0,
   activeProgress = 0,
 }) {
-  const ringGap = 6;                    // space between rings
+  const ringGap = 6;
   const strokeWidth = 10;
   const outerRadius = (size - strokeWidth) / 2;
   const middleRadius = outerRadius - strokeWidth - ringGap;
@@ -19,64 +28,137 @@ export default function CircularProgress({
 
   const clamp = (n) => Math.min(Math.max(n, 0), 100);
 
-  const makeRing = (radius, progress, color) => {
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (clamp(progress) / 100) * circumference;
-    return { circumference, offset, radius, color };
-  };
+  const outerCirc = 2 * Math.PI * outerRadius;
+  const middleCirc = 2 * Math.PI * middleRadius;
+  const innerCirc = 2 * Math.PI * innerRadius;
 
-  const outer = makeRing(outerRadius, stepsProgress, COLORS.primary);
-  const middle = makeRing(middleRadius, caloriesProgress, '#4CAF50');
-  const inner = makeRing(innerRadius, activeProgress, '#2196F3');
+  const outerProgress = useSharedValue(0);
+  const middleProgress = useSharedValue(0);
+  const innerProgress = useSharedValue(0);
+
+  useEffect(() => {
+    outerProgress.value = withDelay(
+      200,
+      withTiming(clamp(stepsProgress), {
+        duration: 800,
+        easing: Easing.out(Easing.cubic),
+      }),
+    );
+    middleProgress.value = withDelay(
+      400,
+      withTiming(clamp(caloriesProgress), {
+        duration: 800,
+        easing: Easing.out(Easing.cubic),
+      }),
+    );
+    innerProgress.value = withDelay(
+      600,
+      withTiming(clamp(activeProgress), {
+        duration: 800,
+        easing: Easing.out(Easing.cubic),
+      }),
+    );
+  }, [stepsProgress, caloriesProgress, activeProgress]);
+
+  const outerProps = useAnimatedProps(() => ({
+    strokeDashoffset: outerCirc - (outerProgress.value / 100) * outerCirc,
+  }));
+  const middleProps = useAnimatedProps(() => ({
+    strokeDashoffset: middleCirc - (middleProgress.value / 100) * middleCirc,
+  }));
+  const innerProps = useAnimatedProps(() => ({
+    strokeDashoffset: innerCirc - (innerProgress.value / 100) * innerCirc,
+  }));
 
   return (
-    <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      style={{
+        width: size,
+        height: size,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Svg width={size} height={size}>
-        {/* Background rings (light gray) */}
-        <Circle stroke="#EEE" fill="none" cx={center} cy={center} r={outer.radius} strokeWidth={strokeWidth} />
-        <Circle stroke="#EEE" fill="none" cx={center} cy={center} r={middle.radius} strokeWidth={strokeWidth} />
-        <Circle stroke="#EEE" fill="none" cx={center} cy={center} r={inner.radius} strokeWidth={strokeWidth} />
+        <Circle
+          stroke="#EEE"
+          fill="none"
+          cx={center}
+          cy={center}
+          r={outerRadius}
+          strokeWidth={strokeWidth}
+        />
+        <Circle
+          stroke="#EEE"
+          fill="none"
+          cx={center}
+          cy={center}
+          r={middleRadius}
+          strokeWidth={strokeWidth}
+        />
+        <Circle
+          stroke="#EEE"
+          fill="none"
+          cx={center}
+          cy={center}
+          r={innerRadius}
+          strokeWidth={strokeWidth}
+        />
 
-        {/* Progress rings */}
-        <Circle
-          stroke={outer.color} fill="none"
-          cx={center} cy={center} r={outer.radius} strokeWidth={strokeWidth}
-          strokeDasharray={`${outer.circumference} ${outer.circumference}`}
-          strokeDashoffset={outer.offset}
+        <AnimatedCircle
+          stroke={COLORS.primary}
+          fill="none"
+          cx={center}
+          cy={center}
+          r={outerRadius}
+          strokeWidth={strokeWidth}
+          strokeDasharray={`${outerCirc} ${outerCirc}`}
+          animatedProps={outerProps}
           strokeLinecap="round"
           transform={`rotate(-90 ${center} ${center})`}
         />
-        <Circle
-          stroke={middle.color} fill="none"
-          cx={center} cy={center} r={middle.radius} strokeWidth={strokeWidth}
-          strokeDasharray={`${middle.circumference} ${middle.circumference}`}
-          strokeDashoffset={middle.offset}
+        <AnimatedCircle
+          stroke="#4CAF50"
+          fill="none"
+          cx={center}
+          cy={center}
+          r={middleRadius}
+          strokeWidth={strokeWidth}
+          strokeDasharray={`${middleCirc} ${middleCirc}`}
+          animatedProps={middleProps}
           strokeLinecap="round"
           transform={`rotate(-90 ${center} ${center})`}
         />
-        <Circle
-          stroke={inner.color} fill="none"
-          cx={center} cy={center} r={inner.radius} strokeWidth={strokeWidth}
-          strokeDasharray={`${inner.circumference} ${inner.circumference}`}
-          strokeDashoffset={inner.offset}
+        <AnimatedCircle
+          stroke="#2196F3"
+          fill="none"
+          cx={center}
+          cy={center}
+          r={innerRadius}
+          strokeWidth={strokeWidth}
+          strokeDasharray={`${innerCirc} ${innerCirc}`}
+          animatedProps={innerProps}
           strokeLinecap="round"
           transform={`rotate(-90 ${center} ${center})`}
         />
       </Svg>
 
-      {/* Center text — show overall completion (average) */}
       <View style={styles.centerContent}>
-        <Text style={styles.progressText}>
-          {Math.round((clamp(stepsProgress) + clamp(caloriesProgress) + clamp(activeProgress)) / 3)}%
-        </Text>
-        <Text style={styles.progressLabel}>today</Text>
+        <Text style={styles.progressText}>Today</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  centerContent: { position: 'absolute', justifyContent: 'center', alignItems: 'center' },
-  progressText: { fontSize: 22, fontWeight: 'bold', color: COLORS.text },
-  progressLabel: { fontSize: 11, color: COLORS.textSecondary },
+  centerContent: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  progressText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
 });

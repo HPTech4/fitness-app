@@ -6,6 +6,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withTiming,
+  withSpring,
+} from 'react-native-reanimated';
 
 import HomeScreen from './screens/HomeScreen';
 import WorkoutsScreen from './screens/WorkoutsScreen';
@@ -15,10 +22,34 @@ import AuthScreen from './screens/Authscreen';
 import WorkoutDetailScreen from './screens/WorkoutDetailScreen';
 import WorkoutPlayerScreen from './screens/WorkoutPlayerScreen';
 import WorkoutCompleteScreen from './screens/WorkoutCompleteScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import { COLORS } from './constants/theme';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+function BouncyTabIcon({ name, color, size, focused }) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (focused) {
+      scale.value = withSequence(
+        withTiming(1.25, { duration: 120 }),
+        withSpring(1, { damping: 12, stiffness: 200 })
+      );
+    }
+  }, [focused]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Ionicons name={name} size={size} color={color} />
+    </Animated.View>
+  );
+}
 
 function MainTabs({ onLogout }) {
   return (
@@ -45,7 +76,7 @@ function MainTabs({ onLogout }) {
           else if (route.name === 'Workouts') iconName = focused ? 'barbell' : 'barbell-outline';
           else if (route.name === 'Stats') iconName = focused ? 'stats-chart' : 'stats-chart-outline';
           else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <BouncyTabIcon name={iconName} size={size} color={color} focused={focused} />;
         },
       })}
     >
@@ -107,6 +138,7 @@ export default function App() {
         <Stack.Screen name="WorkoutDetail" component={WorkoutDetailScreen} />
         <Stack.Screen name="WorkoutPlayer" component={WorkoutPlayerScreen} />
         <Stack.Screen name="WorkoutComplete" component={WorkoutCompleteScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

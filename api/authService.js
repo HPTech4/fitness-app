@@ -15,3 +15,8 @@ export const fetchMe = async () => {
   const res = await client.get('/auth/me');
   return res.data;
 };
+
+export const updateMe = async (updates) => {
+  const res = await client.patch('/auth/me', updates);
+  return res.data;
+};

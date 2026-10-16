@@ -58,8 +58,8 @@ export default function WorkoutDetailScreen({ route, navigation }) {
         <View style={styles.hero}>
           <Image source={{ uri: workout.image }} style={styles.heroImage} />
           <TouchableOpacity style={styles.backIcon} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
+  <Ionicons name="arrow-back" size={20} color="#fff" />
+</TouchableOpacity>
         </View>
 
         {/* BODY */}
@@ -72,18 +72,20 @@ export default function WorkoutDetailScreen({ route, navigation }) {
 
           {/* META */}
           <View style={styles.metaRow}>
-            <View style={styles.metaItem}>
-              <Ionicons name="time-outline" size={18} color={COLORS.primary} />
-              <Text style={styles.metaText}>{workout.duration} min</Text>
-            </View>
-            <View style={styles.metaItem}>
-              <Ionicons name="flame-outline" size={18} color={COLORS.primary} />
-              <Text style={styles.metaText}>{workout.calories} kcal</Text>
-            </View>
-            <View style={styles.metaItem}>
-              <Ionicons name="speedometer-outline" size={18} color={COLORS.primary} />
-              <Text style={styles.metaText}>{workout.level}</Text>
-            </View>
+            <View style={styles.metaRow}>
+  <View style={styles.metaChip}>
+    <Ionicons name="time-outline" size={15} color={COLORS.primary} />
+    <Text style={styles.metaChipText}>{workout.duration} min</Text>
+  </View>
+  <View style={styles.metaChip}>
+    <Ionicons name="flame-outline" size={15} color={COLORS.primary} />
+    <Text style={styles.metaChipText}>{workout.calories} kcal</Text>
+  </View>
+  <View style={styles.metaChip}>
+    <Ionicons name="speedometer-outline" size={15} color={COLORS.primary} />
+    <Text style={styles.metaChipText}>{workout.level}</Text>
+  </View>
+</View>
           </View>
 
           {/* EXERCISES */}
@@ -141,10 +143,24 @@ const styles = StyleSheet.create({
   category: { color: COLORS.primary, fontWeight: '800', fontSize: 11, letterSpacing: 1, marginBottom: 6 },
   title: { fontSize: 26, fontWeight: 'bold', color: COLORS.text, marginBottom: 8 },
   description: { color: COLORS.textSecondary, fontSize: 14, lineHeight: 20, marginBottom: 20 },
-  metaRow: { flexDirection: 'row', gap: 20, marginBottom: 24 },
-  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  metaText: { fontSize: 13, color: COLORS.text, fontWeight: '600' },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: COLORS.text, marginBottom: 12 },
+metaRow: { flexDirection: 'row', gap: 8, marginBottom: 24, flexWrap: 'wrap' },
+metaChip: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 5,
+  backgroundColor: COLORS.primarySoft,
+  paddingHorizontal: 10,
+  paddingVertical: 6,
+  borderRadius: 12,
+},
+metaChipText: { fontSize: 12, color: COLORS.text, fontWeight: '700' },
+  sectionTitle: {
+  fontSize: 18,
+  fontWeight: '800',
+  color: COLORS.text,
+  marginBottom: 12,
+  letterSpacing: -0.3,
+},
   exerciseCard: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: COLORS.card, borderRadius: 14,
